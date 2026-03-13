@@ -1,0 +1,49 @@
+[tasks.build]
+run = "docker compose build"
+
+[tasks."build:full"]
+run = "docker compose build --no-cache"
+
+[tasks.start]
+run = "docker compose up -d"
+
+[tasks.stop]
+run = "docker compose down"
+
+[tasks.restart]
+run = [
+  {task = "stop"},
+  "sleep 5",
+  {task = "start"},
+]
+
+[tasks.backup]
+run = [
+  {task = "stop"},
+  "docker compose run --rm backup"
+]
+
+[tasks.restore]
+run = [
+  {task = "stop"},
+  "docker compose run --rm restore"
+]
+
+[tasks."install-modules"]
+run = [
+  "git clone https://github.com/NathanHandley/mod-ah-bot-plus.git",
+  "git clone https://github.com/silviu20092/mod-easy-respawn.git",
+  "git clone https://github.com/azerothcore/mod-guildhouse.git",
+  "git clone https://github.com/azerothcore/mod-instance-reset",
+  "git clone https://github.com/noisiver/mod-junk-to-gold.git",
+  "git clone https://github.com/BytesGalore/mod-no-hearthstone-cooldown.git",
+  "git clone https://github.com/DustinHendrickson/mod-ollama-chat.git",
+  "git clone https://github.com/DustinHendrickson/mod-player-bot-level-brackets",
+  "git clone https://github.com/jasperes/mod-playerbots.git --branch=jaspion",
+  "git clone https://github.com/azerothcore/mod-starter-guild.git",
+  "git clone https://github.com/dunjeon/mod-TimeIsTime.git",
+]
+dir = "{{config_root}}/azerothcore-wotlk/modules"
+
+[tasks."loggin:world"]
+run = "docker attach ac-worldserver"

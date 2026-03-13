@@ -1,0 +1,71 @@
+services:
+  ac-database:
+    volumes:
+      - ./env/dist/etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  ac-worldserver:
+    volumes:
+      - ./modules:/azerothcore/modules:ro
+
+  ac-ollamaserver:
+    # image: ollama/ollama:rocm
+    image: ollama/ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    # devices:
+    #   - /dev/kfd:/dev/kfd
+    #   - /dev/dri:/dev/dri
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - 11434:11434
+    networks:
+      - ac-network
+    restart: unless-stopped
+
+  backup:
+    image: alpine
+    profiles:
+      - backup
+    volumes:
+      - azerothcore-wotlk_ac-client-data:/client-data:ro
+      - azerothcore-wotlk_ac-database:/database:ro
+      - ./backups:/backup
+    command: >
+      sh -c "
+        tar czf /backup/client-data_$$(date +%Y%m%d_%H%M%S).tar.gz -C /client-data ./ &&
+        tar czf /backup/database-files_$$(date +%Y%m%d_%H%M%S).tar.gz -C /database ./
+      "
+    restart: "no"
+
+  restore:
+    image: alpine
+    profiles:
+      - backup
+    volumes:
+      - azerothcore-wotlk_ac-client-data:/client-data
+      - azerothcore-wotlk_ac-database:/database
+      - ./backups:/backup
+    command: >
+      sh -c "
+        cd /backup
+        if [ -z "client-data.tar.gz" ] || [ -z "database-files.tar.gz" ]; then
+          echo 'ERROR: Please set both CLIENT_DATA_BACKUP and DATABASE_BACKUP environment variables.'
+          echo 'Available backups in /backup:'
+          ls -1 *.tar.gz 2>/dev/null || echo 'No .tar.gz files found.'
+          exit 1
+        fi
+        echo 'Restoring client data from client-data.tar.gz ...'
+        rm -rf /client-data/* /client-data/.* 2>/dev/null || true
+        mkdir -p /client-data || true
+        tar xzf client-data.tar.gz -C /client-data
+        echo 'Restoring database files from database-files.tar.gz ...'
+        rm -rf /database/* /database/.* 2>/dev/null || true
+        mkdir -p /database || true
+        tar xzf database-files.tar.gz -C /database
+        echo 'Restore completed.'
+      "
+    restart: "no"
+
+volumes:
+  ollama:

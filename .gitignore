@@ -106,3 +106,10 @@ local.properties
 # ==================
 .cache
 compile_commands.json
+backups
+env/dist/etc/
+!env/dist/etc/
+env/dist/etc/**/*
+!env/dist/etc/**/
+!env/dist/etc/**/*.conf
+!docker-compose.override.yml
