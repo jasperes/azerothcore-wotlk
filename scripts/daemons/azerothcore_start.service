@@ -1,0 +1,12 @@
+[Unit]
+Description=Start AzerothCore Server
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/azerothcore_start.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

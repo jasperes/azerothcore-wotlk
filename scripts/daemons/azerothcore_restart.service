@@ -1,0 +1,8 @@
+[Unit]
+Description=Stop AzerothCore Server, Backup and Reboot
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/azerothcore_restart.sh
+StandardOutput=journal
+StandardError=journal

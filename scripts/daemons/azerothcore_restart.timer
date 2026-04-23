@@ -1,0 +1,9 @@
+[Unit]
+Description=Restart Server
+
+[Timer]
+OnCalendar=*-*-* 07:44:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

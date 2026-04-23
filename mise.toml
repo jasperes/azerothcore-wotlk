@@ -1,8 +1,14 @@
-[tasks.build]
-run = "docker compose build"
+[tools]
+lazydocker = "latest"
 
-[tasks."build:full"]
-run = "docker compose build --no-cache"
+[env]
+_.file = ".env"
+
+[tasks.build]
+usage = """
+  flag "--full" default=#false
+"""
+run = "docker compose build {% if usage.full %}--no-cache{% endif %}"
 
 [tasks.start]
 run = "docker compose up -d"
@@ -24,12 +30,20 @@ run = [
 ]
 
 [tasks.restore]
+usage = """
+  flag "--client <client>"
+  flag "--database <database>"
+"""
 run = [
   {task = "stop"},
+  "rm backups/client-data.tar.gz || true",
+  "rm backups/database-files.tar.gz || true",
+  "cp backups/{{usage.client}} backups/client-data.tar.gz",
+  "cp backups/{{usage.database}} backups/database-files.tar.gz",
   "docker compose run --rm restore"
 ]
 
-[tasks."install-modules"]
+[tasks."install:modules"]
 run = [
   "git clone https://github.com/NathanHandley/mod-ah-bot-plus.git",
   "git clone https://github.com/silviu20092/mod-easy-respawn.git",
@@ -37,13 +51,15 @@ run = [
   "git clone https://github.com/azerothcore/mod-instance-reset",
   "git clone https://github.com/noisiver/mod-junk-to-gold.git",
   "git clone https://github.com/BytesGalore/mod-no-hearthstone-cooldown.git",
-  "git clone https://github.com/DustinHendrickson/mod-ollama-chat.git",
+#   "git clone https://github.com/DustinHendrickson/mod-ollama-chat.git",
   "git clone https://github.com/DustinHendrickson/mod-player-bot-level-brackets",
   "git clone https://github.com/jasperes/mod-playerbots.git --branch=jaspion",
   "git clone https://github.com/azerothcore/mod-starter-guild.git",
-  "git clone https://github.com/dunjeon/mod-TimeIsTime.git",
+#   "git clone https://github.com/dunjeon/mod-TimeIsTime.git",
+  "git clone https://github.com/azerothcore/mod-pvp-titles.git",
+  "git clone https://github.com/azerothcore/mod-account-achievements.git",
 ]
-dir = "{{config_root}}/azerothcore-wotlk/modules"
+dir = "{{config_root}}/modules"
 
 [tasks."loggin:world"]
 run = "docker attach ac-worldserver"

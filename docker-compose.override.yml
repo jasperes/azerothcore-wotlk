@@ -7,21 +7,17 @@ services:
     volumes:
       - ./modules:/azerothcore/modules:ro
 
-  ac-ollamaserver:
-    # image: ollama/ollama:rocm
-    image: ollama/ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0
-    # devices:
-    #   - /dev/kfd:/dev/kfd
-    #   - /dev/dri:/dev/dri
-    volumes:
-      - ollama:/root/.ollama
-    ports:
-      - 11434:11434
-    networks:
-      - ac-network
-    restart: unless-stopped
+  # ac-ollamaserver:
+  #   image: ollama/ollama
+  #   environment:
+  #     - OLLAMA_HOST=0.0.0.0
+  #   volumes:
+  #     - ollama:/root/.ollama
+  #   ports:
+  #     - 11434:11434
+  #   networks:
+  #     - ac-network
+  #   restart: unless-stopped
 
   backup:
     image: alpine
@@ -67,5 +63,5 @@ services:
       "
     restart: "no"
 
-volumes:
-  ollama:
+# volumes:
+#   ollama:
