@@ -112,12 +112,12 @@ mise run start
 # cd /opt/azerothcore-wotlk
 # mkdir -P env/dist/etc/shared
 # mise run loggin:world
-# .pdump write env/dist/etc/shared/<filename> <character_name>
+# .pdump write /azerothcore/env/dist/etc/shared/<filename> <character_name>
 # docker cp ac-worldserver:/azerothcore/env/dist/etc/shared/<filename> <filename>
 #
 # mkdir -P env/dist/etc/shared
 # mise run loggin:world
-# .pdump load env/dist/etc/shared/<filename> <account>
+# .pdump load /azerothcore/env/dist/etc/shared/<filename> <account>
 
 ##########
 
